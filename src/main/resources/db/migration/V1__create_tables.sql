@@ -1,0 +1,43 @@
+CREATE TABLE publisher (
+    id UUID PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    country VARCHAR(100)
+);
+
+CREATE TABLE book (
+   id UUID PRIMARY KEY,
+   title VARCHAR(255) NOT NULL,
+   sub_title VARCHAR(500) NOT NULL,
+   description TEXT,
+   pages INTEGER NOT NULL,
+   isbn VARCHAR(20) UNIQUE,
+   publisher_id UUID,
+
+   CONSTRAINT fk_book_publisher
+       FOREIGN KEY (publisher_id)
+           REFERENCES publisher(id)
+);
+
+CREATE TABLE author (
+     id UUID PRIMARY KEY,
+     first_name VARCHAR(100) NOT NULL,
+     last_name VARCHAR(100) NOT NULL,
+     birth_date DATE
+);
+
+CREATE TABLE author_book (
+      author_id UUID NOT NULL,
+      book_id UUID NOT NULL,
+
+      PRIMARY KEY (author_id, book_id),
+
+      CONSTRAINT fk_author_book_author
+          FOREIGN KEY (author_id)
+              REFERENCES author(id)
+              ON DELETE CASCADE,
+
+      CONSTRAINT fk_author_book_book
+          FOREIGN KEY (book_id)
+              REFERENCES book(id)
+              ON DELETE CASCADE
+);
