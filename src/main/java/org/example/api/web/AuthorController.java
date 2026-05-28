@@ -22,31 +22,26 @@ public class AuthorController {
 
 	private final AuthorService authorService;
 
-	// curl -X GET localhost:8080/api/v1/author/{id}
 	@GetMapping("/{id}")
 	public AuthorDto getAuthor(@PathVariable UUID id) {
 		return authorService.getAuthor(id);
 	}
 
-	// curl -X GET localhost:8080/api/v1/author
 	@GetMapping()
 	public List<AuthorDto> getAuthors() {
 		return authorService.getAuthors();
 	}
 
-	// curl -X POST localhost:8080/api/v1/author -H "Content-Type: application/json" -d '{"firstName":"John","lastName":"Doe","birthDate":"1990-01-01"}'
 	@PostMapping
 	public AuthorDto createAuthor(@RequestBody AuthorDto authorDto) {
 		return authorService.createAuthor(authorDto);
 	}
 
-	// curl -X PUT localhost:8080/api/v1/author/{id} -H "Content-Type: application/json" -d '{"firstName":"Jane","lastName":"Doe","birthDate":"1992-02-02"}'
 	@PutMapping("/{id}")
 	public AuthorDto updateAuthor(@PathVariable UUID id, @RequestBody AuthorDto authorDto) {
 		return authorService.updateAuthor(id, authorDto);
 	}
 
-	// curl -X DELETE localhost:8080/api/v1/author/{id}
 	@DeleteMapping("/{id}")
 	public void deleteAuthor(@PathVariable UUID id) {
 		authorService.deleteAuthor(id);
