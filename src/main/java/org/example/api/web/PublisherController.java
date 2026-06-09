@@ -1,5 +1,7 @@
 package org.example.api.web;
 
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.example.api.dto.PublisherDto;
 import org.example.api.service.PublisherService;
@@ -12,39 +14,36 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.UUID;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/v1/publisher")
 public class PublisherController {
 
-	private final PublisherService publisherService;
+  private final PublisherService publisherService;
 
-	@GetMapping("/{id}")
-	public PublisherDto getPublisher(@PathVariable UUID id) {
-		return publisherService.getPublisher(id);
-	}
+  @GetMapping("/{id}")
+  public PublisherDto getPublisher(@PathVariable UUID id) {
+    return publisherService.getPublisher(id);
+  }
 
-	@GetMapping
-	public List<PublisherDto> getPublishers() {
-		return publisherService.getPublishers();
-	}
+  @GetMapping
+  public List<PublisherDto> getPublishers() {
+    return publisherService.getPublishers();
+  }
 
-	@PostMapping
-	public PublisherDto createPublisher(@RequestBody PublisherDto publisherDto) {
-		return publisherService.createPublisher(publisherDto);
-	}
+  @PostMapping
+  public PublisherDto createPublisher(@RequestBody PublisherDto publisherDto) {
+    return publisherService.createPublisher(publisherDto);
+  }
 
-	@PutMapping("/{id}")
-	public PublisherDto updatePublisher(@PathVariable UUID id, @RequestBody PublisherDto publisherDto) {
-		return publisherService.updatePublisher(id, publisherDto);
-	}
+  @PutMapping("/{id}")
+  public PublisherDto updatePublisher(
+      @PathVariable UUID id, @RequestBody PublisherDto publisherDto) {
+    return publisherService.updatePublisher(id, publisherDto);
+  }
 
-	@DeleteMapping("/{id}")
-	public void deletePublisher(@PathVariable UUID id) {
-		publisherService.deletePublisher(id);
-	}
+  @DeleteMapping("/{id}")
+  public void deletePublisher(@PathVariable UUID id) {
+    publisherService.deletePublisher(id);
+  }
 }
-
