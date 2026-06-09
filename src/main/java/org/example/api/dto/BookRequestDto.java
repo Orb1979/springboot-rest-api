@@ -1,15 +1,17 @@
 package org.example.api.dto;
 
+import java.util.List;
 import java.util.UUID;
 
-public record BookDto(
+public record BookRequestDto(
 		UUID id,
 		String title,
 		String subTitle,
 		String description,
-		int pages,
+		Integer pages,
 		String isbn,
-		UUID publisherId
+		UUID publisherId,
+		List<UUID> authorIds
 ) {
 }
 

@@ -19,8 +19,10 @@ repositories {
 }
 
 dependencies {
+    // SPRING BOOT 4, 'spring-boot-starter-web' IS NOW 'spring-boot-starter-webmvc'
+    // implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
 
     //implementation 'org.flywaydb:flyway-core' //spring 3.x
     implementation("org.springframework.boot:spring-boot-starter-flyway:4.0.1")
@@ -28,19 +30,18 @@ dependencies {
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-
     runtimeOnly 'org.postgresql:postgresql'
 
+    // In Spring Boot 4, you no longer rely solely on a massive spring-boot-starter-test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
+    testImplementation 'com.h2database:h2'
 
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
-
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 

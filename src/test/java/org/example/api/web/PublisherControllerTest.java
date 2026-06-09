@@ -29,7 +29,6 @@ class PublisherControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
-
 	@MockitoBean
 	private PublisherService publisherService;
 

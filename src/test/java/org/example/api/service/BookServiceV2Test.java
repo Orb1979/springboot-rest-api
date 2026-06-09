@@ -26,7 +26,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class BookServiceTest {
+class BookServiceV2Test {
 
 	@Mock
 	private BookRepository bookRepository;
@@ -38,21 +38,14 @@ class BookServiceTest {
 	private AuthorRepository authorRepository;
 
 	@InjectMocks
-	private BookService bookService;
+	private BookServiceV2 bookService;
 
 	@Test
 	void createBookWithoutPublisherAndAuthor() {
 		UUID bookId = UUID.randomUUID();
 
 		BookRequestDto request = new BookRequestDto(
-				null,
-				"title",
-				"subtitle",
-				"description",
-				100,
-				"isbn",
-				null,
-				null
+				null, "title", "subtitle", "description", 100, "isbn", null, null
 		);
 
 		when(bookRepository.save(any(Book.class)))
@@ -87,14 +80,7 @@ class BookServiceTest {
 		author2.setId(author2Id);
 
 		BookRequestDto request = new BookRequestDto(
-				null,
-				"title",
-				"subtitle",
-				"description",
-				100,
-				"isbn",
-				publisherId,
-				List.of(author1Id, author2Id)
+				null, "title", "subtitle", "description", 100, "isbn", publisherId, List.of(author1Id, author2Id)
 		);
 
 		when(publisherRepository.findById(publisherId)).thenReturn(Optional.of(publisher));
@@ -123,14 +109,7 @@ class BookServiceTest {
 		publisher.setId(publisherId);
 
 		BookRequestDto request = new BookRequestDto(
-				null,
-				"title",
-				"subtitle",
-				"description",
-				100,
-				"isbn",
-				publisherId,
-				List.of(authorId)
+				null, "title", "subtitle", "description", 100, "isbn", publisherId, List.of(authorId)
 		);
 
 		when(publisherRepository.findById(publisherId)).thenReturn(Optional.of(publisher));
@@ -145,14 +124,7 @@ class BookServiceTest {
 		UUID publisherId = UUID.randomUUID();
 
 		BookRequestDto request = new BookRequestDto(
-				null,
-				"title",
-				"subtitle",
-				"description",
-				100,
-				"isbn",
-				publisherId,
-				List.of()
+				null, "title", "subtitle", "description", 100, "isbn", publisherId, List.of()
 		);
 
 		when(publisherRepository.findById(publisherId)).thenReturn(Optional.empty());
@@ -206,14 +178,7 @@ class BookServiceTest {
 		existingBook.getAuthors().add(oldAuthor);
 
 		BookRequestDto request = new BookRequestDto(
-				null,
-				"New Title",
-				"New Subtitle",
-				"New Description",
-				200,
-				"new-isbn",
-				newPublisherId,
-				List.of(newAuthorId)
+				null, "New Title", "New Subtitle", "New Description", 200, "new-isbn", newPublisherId, List.of(newAuthorId)
 		);
 
 		when(bookRepository.findByIdHydrated(bookId)).thenReturn(Optional.of(existingBook));
@@ -234,14 +199,7 @@ class BookServiceTest {
 		UUID id = UUID.randomUUID();
 		UUID publisherId = UUID.randomUUID();
 		BookRequestDto bookRequestDto = new BookRequestDto(
-				null,
-				"title",
-				"subTitle",
-				"description",
-				100,
-				"isbn",
-				publisherId,
-				List.of()
+				null, "title", "subTitle", "description", 100, "isbn", publisherId, List.of()
 		);
 		when(bookRepository.findByIdHydrated(id)).thenReturn(Optional.empty());
 		assertThrows(ResourceNotFoundException.class, () -> bookService.updateBook(id, bookRequestDto));
@@ -262,5 +220,97 @@ class BookServiceTest {
 		when(bookRepository.existsById(id)).thenReturn(false);
 		assertThrows(ResourceNotFoundException.class, () -> bookService.deleteBook(id));
 		verify(bookRepository, never()).deleteById(any());
+	}
+
+	// --- Granular Relationship Sub-Resource Tests ---
+
+	@Test
+	void addAuthorToBook() {
+		UUID bookId = UUID.randomUUID();
+		UUID authorId = UUID.randomUUID();
+
+		Book book = new Book();
+		book.setId(bookId);
+
+		Author author = new Author();
+		author.setId(authorId);
+
+		when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
+		when(authorRepository.findById(authorId)).thenReturn(Optional.of(author));
+		when(bookRepository.findByIdHydrated(bookId)).thenReturn(Optional.of(book));
+
+		BookResponseDto result = bookService.addAuthorToBook(bookId, authorId);
+
+		assertNotNull(result);
+		verify(bookRepository).save(book);
+		verify(bookRepository).findByIdHydrated(bookId);
+	}
+
+	@Test
+	void removeAuthorFromBook() {
+		UUID bookId = UUID.randomUUID();
+		UUID authorId = UUID.randomUUID();
+
+		Author author = new Author();
+		author.setId(authorId);
+
+		Book book = new Book();
+		book.setId(bookId);
+		book.getAuthors().add(author);
+
+		when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
+		when(bookRepository.findByIdHydrated(bookId)).thenReturn(Optional.of(book));
+
+		BookResponseDto result = bookService.removeAuthorFromBook(bookId, authorId);
+
+		assertNotNull(result);
+		assertTrue(book.getAuthors().isEmpty());
+		verify(bookRepository).save(book);
+		verify(bookRepository).findByIdHydrated(bookId);
+	}
+
+	@Test
+	void replaceAuthors() {
+		UUID bookId = UUID.randomUUID();
+		UUID authorId = UUID.randomUUID();
+
+		Author newAuthor = new Author();
+		newAuthor.setId(authorId);
+
+		Book book = new Book();
+		book.setId(bookId);
+
+		// Since replaceAuthors handles complete collection overwrite, it starts hydrated
+		when(bookRepository.findByIdHydrated(bookId)).thenReturn(Optional.of(book));
+		when(authorRepository.findAllById(List.of(authorId))).thenReturn(List.of(newAuthor));
+		when(bookRepository.save(book)).thenReturn(book);
+
+		BookResponseDto result = bookService.replaceAuthors(bookId, List.of(authorId));
+
+		assertNotNull(result);
+		assertEquals(1, result.authors().size());
+		assertEquals(authorId, result.authors().getFirst().id());
+		verify(bookRepository).save(book);
+	}
+
+	@Test
+	void removePublisherFromBook() {
+		UUID bookId = UUID.randomUUID();
+		Publisher publisher = new Publisher();
+		publisher.setId(UUID.randomUUID());
+
+		Book book = new Book();
+		book.setId(bookId);
+		book.setPublisher(publisher);
+
+		when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
+		when(bookRepository.findByIdHydrated(bookId)).thenReturn(Optional.of(book));
+
+		BookResponseDto result = bookService.removePublisherFromBook(bookId);
+
+		assertNotNull(result);
+		assertNull(book.getPublisher());
+		verify(bookRepository).save(book);
+		verify(bookRepository).findByIdHydrated(bookId);
 	}
 }

@@ -19,7 +19,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/v1/author")
 public class AuthorController {
-
 	private final AuthorService authorService;
 
 	@GetMapping("/{id}")
@@ -46,5 +45,4 @@ public class AuthorController {
 	public void deleteAuthor(@PathVariable UUID id) {
 		authorService.deleteAuthor(id);
 	}
-
 }

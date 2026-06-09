@@ -3,7 +3,7 @@ package org.example.api.web;
 import lombok.RequiredArgsConstructor;
 import org.example.api.dto.BookRequestDto;
 import org.example.api.dto.BookResponseDto;
-import org.example.api.service.BookService;
+import org.example.api.service.BookServiceV2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,9 +12,9 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/v1/book")
-public class BookController {
-	private final BookService bookService;
+@RequestMapping(path = "/api/v2/book")
+public class BookControllerV2 {
+	private final BookServiceV2 bookService;
 
 	@GetMapping("/{id}")
 	public ResponseEntity<BookResponseDto> getBook(@PathVariable UUID id) {
@@ -23,7 +23,7 @@ public class BookController {
 
 	@GetMapping
 	public ResponseEntity<List<BookResponseDto>> getBooks() {
-		return  ResponseEntity.ok(bookService.getBooks());
+		return ResponseEntity.ok(bookService.getBooks());
 	}
 
 	@PostMapping
@@ -46,5 +46,32 @@ public class BookController {
 		bookService.deleteBook(id);
 		return ResponseEntity.noContent().build();
 	}
-}
 
+	// --- Granular Sub-Resource Endpoints ---
+
+	@PostMapping("/{id}/authors/{authorId}")
+	public ResponseEntity<BookResponseDto> addAuthorToBook(
+			@PathVariable UUID id,
+			@PathVariable UUID authorId) {
+		return ResponseEntity.ok(bookService.addAuthorToBook(id, authorId));
+	}
+
+	@DeleteMapping("/{id}/authors/{authorId}")
+	public ResponseEntity<BookResponseDto> removeAuthorFromBook(
+			@PathVariable UUID id,
+			@PathVariable UUID authorId) {
+		return ResponseEntity.ok(bookService.removeAuthorFromBook(id, authorId));
+	}
+
+	@PutMapping("/{id}/authors")
+	public ResponseEntity<BookResponseDto> replaceAuthors(
+			@PathVariable UUID id,
+			@RequestBody List<UUID> authorIds) {
+		return ResponseEntity.ok(bookService.replaceAuthors(id, authorIds));
+	}
+
+	@DeleteMapping("/{id}/publisher")
+	public ResponseEntity<BookResponseDto> removePublisherFromBook(@PathVariable UUID id) {
+		return ResponseEntity.ok(bookService.removePublisherFromBook(id));
+	}
+}

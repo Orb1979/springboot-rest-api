@@ -11,12 +11,4 @@ public class ApiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ApiApplication.class, args);
 	}
-
-//	@Bean
-//	CommandLineRunner flywayCheck(org.flywaydb.core.Flyway flyway) {
-//		return args -> {
-//			System.out.println("FLYWAY VERSION: " + flyway.info().current());
-//		};
-//	}
-
 }
