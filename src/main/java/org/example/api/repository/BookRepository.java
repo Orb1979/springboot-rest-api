@@ -14,7 +14,8 @@ public interface BookRepository extends JpaRepository<Book, UUID> {
       """
     SELECT b
     FROM Book b
-    LEFT JOIN FETCH b.authors
+    LEFT JOIN FETCH b.authorBooks ab
+    LEFT JOIN FETCH ab.author
     LEFT JOIN FETCH b.publisher
     WHERE b.id = :id
 """)
@@ -24,7 +25,8 @@ public interface BookRepository extends JpaRepository<Book, UUID> {
       """
     SELECT b
     FROM Book b
-    LEFT JOIN FETCH b.authors
+    LEFT JOIN FETCH b.authorBooks ab
+    LEFT JOIN FETCH ab.author
     LEFT JOIN FETCH b.publisher
 """)
   Optional<Book> findAllHydrated();

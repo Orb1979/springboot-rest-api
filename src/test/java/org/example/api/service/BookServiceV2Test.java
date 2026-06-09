@@ -12,6 +12,7 @@ import java.util.UUID;
 import org.example.api.dto.BookRequestDto;
 import org.example.api.dto.BookResponseDto;
 import org.example.api.entity.Author;
+import org.example.api.entity.AuthorBook;
 import org.example.api.entity.Book;
 import org.example.api.entity.Publisher;
 import org.example.api.exception.ResourceNotFoundException;
@@ -180,7 +181,7 @@ class BookServiceV2Test {
     Book existingBook = new Book();
     existingBook.setId(bookId);
     existingBook.setPublisher(oldPublisher);
-    existingBook.getAuthors().add(oldAuthor);
+    existingBook.getAuthorBooks().add(new AuthorBook(oldAuthor, existingBook));
 
     BookRequestDto request =
         new BookRequestDto(
@@ -268,7 +269,7 @@ class BookServiceV2Test {
 
     Book book = new Book();
     book.setId(bookId);
-    book.getAuthors().add(author);
+    book.getAuthorBooks().add(new AuthorBook(author, book));
 
     when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
     when(bookRepository.findByIdHydrated(bookId)).thenReturn(Optional.of(book));
@@ -276,7 +277,7 @@ class BookServiceV2Test {
     BookResponseDto result = bookService.removeAuthorFromBook(bookId, authorId);
 
     assertNotNull(result);
-    assertTrue(book.getAuthors().isEmpty());
+    assertTrue(book.getAuthorBooks().isEmpty());
     verify(bookRepository).save(book);
     verify(bookRepository).findByIdHydrated(bookId);
   }

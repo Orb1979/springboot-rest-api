@@ -8,6 +8,7 @@ import org.example.api.dto.BookRequestDto;
 import org.example.api.dto.BookResponseDto;
 import org.example.api.dto.PublisherDto;
 import org.example.api.entity.Author;
+import org.example.api.entity.AuthorBook;
 import org.example.api.entity.Book;
 import org.example.api.entity.Publisher;
 import org.example.api.exception.ResourceNotFoundException;
@@ -52,8 +53,12 @@ public class BookService {
     existingBook.setPages(bookRequestDto.pages());
     existingBook.setIsbn(bookRequestDto.isbn());
     existingBook.setPublisher(resolvePublisher(bookRequestDto.publisherId()));
-    existingBook.getAuthors().clear();
-    existingBook.getAuthors().addAll(resolveAuthors(bookRequestDto.authorIds()));
+    existingBook.getAuthorBooks().clear();
+    if (bookRequestDto.authorIds() != null) {
+      resolveAuthors(bookRequestDto.authorIds()).forEach(author -> {
+        existingBook.getAuthorBooks().add(new AuthorBook(author, existingBook));
+      });
+    }
 
     Book saved = bookRepository.save(existingBook);
     return toResponseDto(saved);
@@ -90,8 +95,10 @@ public class BookService {
     }
 
     if (dto.authorIds() != null) {
-      existingBook.getAuthors().clear();
-      existingBook.getAuthors().addAll(resolveAuthors(dto.authorIds()));
+      existingBook.getAuthorBooks().clear();
+      resolveAuthors(dto.authorIds()).forEach(author -> {
+        existingBook.getAuthorBooks().add(new AuthorBook(author, existingBook));
+      });
     }
 
     Book saved = bookRepository.save(existingBook);
@@ -119,7 +126,8 @@ public class BookService {
                 book.getPublisher().getName(),
                 book.getPublisher().getCountry())
             : null,
-        book.getAuthors().stream()
+        book.getAuthorBooks().stream()
+            .map(AuthorBook::getAuthor)
             .map(
                 author ->
                     new AuthorDto(
@@ -148,7 +156,9 @@ public class BookService {
       book.setPublisher(resolvePublisher(dto.publisherId()));
     }
     if (dto.authorIds() != null) {
-      book.getAuthors().addAll(resolveAuthors(dto.authorIds()));
+      resolveAuthors(dto.authorIds()).forEach(author -> {
+        book.getAuthorBooks().add(new AuthorBook(author, book));
+      });
     }
     return book;
   }

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDate;
 import java.util.List;
 import org.example.api.entity.Author;
+import org.example.api.entity.AuthorBook;
 import org.example.api.entity.Book;
 import org.example.api.entity.Publisher;
 import org.example.api.repository.AuthorRepository;
@@ -135,7 +136,7 @@ class RelationshipCardinalityJpaTest {
 
       // Assert
       Author foundAuthor = authorRepository.findById(author.getId()).orElseThrow();
-      assertTrue(foundAuthor.getBooks().isEmpty(), "Author should have an empty book list");
+      assertTrue(foundAuthor.getAuthorBooks().isEmpty(), "Author should have an empty book list");
       assertEquals(1, authorRepository.count());
       assertEquals(0, bookRepository.count());
     }
@@ -160,9 +161,9 @@ class RelationshipCardinalityJpaTest {
       book.setIsbn("9780135957059");
       book.setPages(352);
 
-      // Book is the owning side, so we must add authors to the book's collection
-      book.getAuthors().add(author1);
-      book.getAuthors().add(author2);
+      // Add authors using the Join Entity AuthorBook
+      book.getAuthorBooks().add(new AuthorBook(author1, book));
+      book.getAuthorBooks().add(new AuthorBook(author2, book));
 
       // Act
       bookRepository.save(book);
@@ -170,11 +171,11 @@ class RelationshipCardinalityJpaTest {
 
       // Assert
       Book foundBook = bookRepository.findById(book.getId()).orElseThrow();
-      assertEquals(2, foundBook.getAuthors().size(), "Book should link to exactly 2 authors");
+      assertEquals(2, foundBook.getAuthorBooks().size(), "Book should link to exactly 2 authors");
 
       // Checking inverse mapping syncs cleanly
       Author foundAuthor1 = authorRepository.findById(author1.getId()).orElseThrow();
-      assertEquals(1, foundAuthor1.getBooks().size(), "Author 1 should map back to the book");
+      assertEquals(1, foundAuthor1.getAuthorBooks().size(), "Author 1 should map back to the book");
     }
 
     @Test
@@ -192,7 +193,7 @@ class RelationshipCardinalityJpaTest {
 
       // Assert
       Book foundBook = bookRepository.findById(anonymousBook.getId()).orElseThrow();
-      assertTrue(foundBook.getAuthors().isEmpty(), "Owning collection should be completely empty");
+      assertTrue(foundBook.getAuthorBooks().isEmpty(), "Owning collection should be completely empty");
       assertEquals(1, bookRepository.count());
     }
 
@@ -209,13 +210,13 @@ class RelationshipCardinalityJpaTest {
       book1.setTitle("Clean Code");
       book1.setSubTitle("A Handbook of Agile Software Craftsmanship");
       book1.setIsbn("9780132350884");
-      book1.getAuthors().add(author); // Book owns relation
+      book1.getAuthorBooks().add(new AuthorBook(author, book1)); // Book owns relation
 
       Book book2 = new Book();
       book2.setTitle("Clean Architecture");
       book2.setSubTitle("A Craftsman's Guide to Software Structure and Design");
       book2.setIsbn("9780134494166");
-      book2.getAuthors().add(author); // Book owns relation
+      book2.getAuthorBooks().add(new AuthorBook(author, book2)); // Book owns relation
 
       // Act
       bookRepository.saveAll(List.of(book1, book2));
@@ -224,7 +225,7 @@ class RelationshipCardinalityJpaTest {
       // Assert
       Author foundAuthor = authorRepository.findById(author.getId()).orElseThrow();
       assertEquals(
-          2, foundAuthor.getBooks().size(), "Inverse relationship side should load 2 books");
+          2, foundAuthor.getAuthorBooks().size(), "Inverse relationship side should load 2 books");
       assertEquals(2, bookRepository.count());
       assertEquals(1, authorRepository.count());
     }

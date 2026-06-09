@@ -23,7 +23,6 @@ public class Author {
 
   private LocalDate birthDate;
 
-  // inverse side,
-  @ManyToMany(mappedBy = "authors")
-  private List<Book> books = new ArrayList<>();
+  @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<AuthorBook> authorBooks = new ArrayList<>();
 }
