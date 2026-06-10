@@ -10,7 +10,9 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
-import org.example.api.dto.AuthorDto;
+
+import org.example.api.dto.AuthorRequestDto;
+import org.example.api.dto.AuthorResponseDto;
 import org.example.api.entity.Author;
 import org.example.api.repository.AuthorRepository;
 import org.junit.jupiter.api.Test;
@@ -29,14 +31,14 @@ class AuthorServiceTest {
 
   @Test
   void createAuthorSavesAndReturnsAuthor() {
-    AuthorDto authorDto = new AuthorDto(null, "John", "Doe", java.time.LocalDate.of(1990, 1, 1));
+    AuthorRequestDto requestDto = new AuthorRequestDto("John", "Doe", java.time.LocalDate.of(1990, 1, 1));
     Author author = new Author();
     author.setFirstName("John");
     author.setLastName("Doe");
     author.setBirthDate(java.time.LocalDate.of(1990, 1, 1));
     when(authorRepository.save(any(Author.class))).thenReturn(author);
 
-    AuthorDto result = authorService.createAuthor(authorDto);
+    AuthorResponseDto result = authorService.createAuthor(requestDto);
 
     assertEquals("John", result.firstName());
     assertEquals("Doe", result.lastName());
@@ -52,12 +54,12 @@ class AuthorServiceTest {
     existingAuthor.setLastName("Name");
     existingAuthor.setBirthDate(LocalDate.of(1990, 1, 1));
 
-    AuthorDto updatedAuthor = new AuthorDto(null, "New", "Author", LocalDate.of(1995, 5, 10));
+    AuthorRequestDto requestDto = new AuthorRequestDto("New", "Author", LocalDate.of(1995, 5, 10));
 
     when(authorRepository.findById(id)).thenReturn(Optional.of(existingAuthor));
     when(authorRepository.save(existingAuthor)).thenReturn(existingAuthor);
 
-    AuthorDto result = authorService.updateAuthor(id, updatedAuthor);
+    AuthorResponseDto result = authorService.updateAuthor(id, requestDto);
 
     assertEquals("New", result.firstName());
     assertEquals("Author", result.lastName());
@@ -72,7 +74,7 @@ class AuthorServiceTest {
 
     assertThrows(
         ResponseStatusException.class,
-        () -> authorService.updateAuthor(id, new AuthorDto(null, "a", "b", null)));
+        () -> authorService.updateAuthor(id, new AuthorRequestDto("a", "b", null)));
     verify(authorRepository, never()).save(any());
   }
 

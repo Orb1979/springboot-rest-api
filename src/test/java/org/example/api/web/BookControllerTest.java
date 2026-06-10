@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-import org.example.api.dto.AuthorDto;
+import org.example.api.dto.AuthorResponseDto;
 import org.example.api.dto.BookRequestDto;
 import org.example.api.dto.BookResponseDto;
 import org.example.api.dto.PublisherDto;
@@ -232,7 +232,7 @@ class BookControllerTest {
         pages,
         isbn,
         new PublisherDto(publisherId, publisherName, publisherCountry),
-        List.of(new AuthorDto(authorId, authorFirstName, authorLastName, authorBirthDate)));
+        List.of(new AuthorResponseDto(authorId, authorFirstName, authorLastName, authorBirthDate)));
   }
 
   private BookResponseDto createBookResponseDto(UUID bookId, UUID publisherId, UUID authorId) {

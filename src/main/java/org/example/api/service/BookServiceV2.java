@@ -3,7 +3,7 @@ package org.example.api.service;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.example.api.dto.AuthorDto;
+import org.example.api.dto.AuthorResponseDto;
 import org.example.api.dto.BookRequestDto;
 import org.example.api.dto.BookResponseDto;
 import org.example.api.dto.PublisherDto;
@@ -202,7 +202,7 @@ public class BookServiceV2 {
             .map(AuthorBook::getAuthor)
             .map(
                 author ->
-                    new AuthorDto(
+                    new AuthorResponseDto(
                         author.getId(),
                         author.getFirstName(),
                         author.getLastName(),

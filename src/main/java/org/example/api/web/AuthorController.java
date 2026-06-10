@@ -3,7 +3,8 @@ package org.example.api.web;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.example.api.dto.AuthorDto;
+import org.example.api.dto.AuthorRequestDto;
+import org.example.api.dto.AuthorResponseDto;
 import org.example.api.service.AuthorService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,23 +22,23 @@ public class AuthorController {
   private final AuthorService authorService;
 
   @GetMapping("/{id}")
-  public AuthorDto getAuthor(@PathVariable UUID id) {
+  public AuthorResponseDto getAuthor(@PathVariable UUID id) {
     return authorService.getAuthor(id);
   }
 
   @GetMapping()
-  public List<AuthorDto> getAuthors() {
+  public List<AuthorResponseDto> getAuthors() {
     return authorService.getAuthors();
   }
 
   @PostMapping
-  public AuthorDto createAuthor(@RequestBody AuthorDto authorDto) {
-    return authorService.createAuthor(authorDto);
+  public AuthorResponseDto createAuthor(@RequestBody AuthorRequestDto requestDto) {
+    return authorService.createAuthor(requestDto);
   }
 
   @PutMapping("/{id}")
-  public AuthorDto updateAuthor(@PathVariable UUID id, @RequestBody AuthorDto authorDto) {
-    return authorService.updateAuthor(id, authorDto);
+  public AuthorResponseDto updateAuthor(@PathVariable UUID id, @RequestBody AuthorRequestDto requestDto) {
+    return authorService.updateAuthor(id, requestDto);
   }
 
   @DeleteMapping("/{id}")
