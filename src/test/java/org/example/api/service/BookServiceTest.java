@@ -41,7 +41,7 @@ class BookServiceTest {
     UUID bookId = UUID.randomUUID();
 
     BookRequestDto request =
-        new BookRequestDto(null, "title", "subtitle", "description", 100, "isbn", null, null);
+        new BookRequestDto("title", "subtitle", "description", 100, "isbn", null, null);
 
     when(bookRepository.save(any(Book.class)))
         .thenAnswer(
@@ -77,7 +77,6 @@ class BookServiceTest {
 
     BookRequestDto request =
         new BookRequestDto(
-            null,
             "title",
             "subtitle",
             "description",
@@ -114,8 +113,7 @@ class BookServiceTest {
     publisher.setId(publisherId);
 
     BookRequestDto request =
-        new BookRequestDto(
-            null, "title", "subtitle", "description", 100, "isbn", publisherId, List.of(authorId));
+        new BookRequestDto("title", "subtitle", "description", 100, "isbn", publisherId, List.of(authorId));
 
     when(publisherRepository.findById(publisherId)).thenReturn(Optional.of(publisher));
     when(authorRepository.findAllById(List.of(authorId))).thenReturn(List.of());
@@ -129,8 +127,7 @@ class BookServiceTest {
     UUID publisherId = UUID.randomUUID();
 
     BookRequestDto request =
-        new BookRequestDto(
-            null, "title", "subtitle", "description", 100, "isbn", publisherId, List.of());
+        new BookRequestDto("title", "subtitle", "description", 100, "isbn", publisherId, List.of());
 
     when(publisherRepository.findById(publisherId)).thenReturn(Optional.empty());
     assertThrows(ResourceNotFoundException.class, () -> bookService.createBook(request));
@@ -147,7 +144,7 @@ class BookServiceTest {
     existingBook.setSubTitle("old subTitle");
 
     BookRequestDto request =
-        new BookRequestDto(null, "new title", null, null, null, null, null, null);
+        new BookRequestDto("new title", null, null, null, null, null, null);
 
     when(bookRepository.findByIdHydrated(bookId)).thenReturn(Optional.of(existingBook));
     when(bookRepository.save(existingBook)).thenReturn(existingBook);
@@ -185,7 +182,6 @@ class BookServiceTest {
 
     BookRequestDto request =
         new BookRequestDto(
-            null,
             "New Title",
             "New Subtitle",
             "New Description",
@@ -212,8 +208,7 @@ class BookServiceTest {
     UUID id = UUID.randomUUID();
     UUID publisherId = UUID.randomUUID();
     BookRequestDto bookRequestDto =
-        new BookRequestDto(
-            null, "title", "subTitle", "description", 100, "isbn", publisherId, List.of());
+        new BookRequestDto("title", "subTitle", "description", 100, "isbn", publisherId, List.of());
     when(bookRepository.findByIdHydrated(id)).thenReturn(Optional.empty());
     assertThrows(ResourceNotFoundException.class, () -> bookService.updateBook(id, bookRequestDto));
     verify(bookRepository, never()).save(any());

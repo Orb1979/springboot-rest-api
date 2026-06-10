@@ -144,9 +144,6 @@ public class BookService {
     }
 
     Book book = new Book();
-    if (dto.id() != null) {
-      book.setId(dto.id());
-    }
     book.setTitle(dto.title());
     book.setSubTitle(dto.subTitle());
     book.setDescription(dto.description());

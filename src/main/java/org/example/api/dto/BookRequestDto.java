@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.UUID;
 
 public record BookRequestDto(
-    UUID id,
     String title,
     String subTitle,
     String description,
