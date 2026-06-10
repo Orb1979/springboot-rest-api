@@ -14,7 +14,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 import java.util.UUID;
-import org.example.api.dto.PublisherDto;
+
+import org.example.api.dto.PublisherRequestDto;
+import org.example.api.dto.PublisherResponseDto;
 import org.example.api.service.PublisherService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +34,7 @@ class PublisherControllerTest {
   @Test
   void getPublisherReturnsPublisher() throws Exception {
     UUID id = UUID.randomUUID();
-    PublisherDto publisher = new PublisherDto(id, "Manning", "USA");
+    PublisherResponseDto publisher = new PublisherResponseDto(id, "Manning", "USA");
     when(publisherService.getPublisher(id)).thenReturn(publisher);
 
     mockMvc
@@ -45,30 +47,30 @@ class PublisherControllerTest {
 
   @Test
   void getPublishersReturnsPublishers() throws Exception {
-    PublisherDto publisher = new PublisherDto(UUID.randomUUID(), "Packt", "UK");
-    when(publisherService.getPublishers()).thenReturn(List.of(publisher));
+    PublisherResponseDto response = new PublisherResponseDto(UUID.randomUUID(), "Packt", "UK");
+    when(publisherService.getPublishers()).thenReturn(List.of(response));
 
     mockMvc
         .perform(get("/api/v1/publisher"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].id").value(publisher.id().toString()))
+        .andExpect(jsonPath("$[0].id").value(response.id().toString()))
         .andExpect(jsonPath("$[0].name").value("Packt"))
         .andExpect(jsonPath("$[0].country").value("UK"));
   }
 
   @Test
   void createPublisherReturnsCreatedPublisher() throws Exception {
-    PublisherDto created = new PublisherDto(UUID.randomUUID(), "O'Reilly", "USA");
+    PublisherResponseDto response = new PublisherResponseDto(UUID.randomUUID(), "O'Reilly", "USA");
     String requestJson =
         """
 				{"name":"O'Reilly","country":"USA"}
 				""";
-    when(publisherService.createPublisher(any(PublisherDto.class))).thenReturn(created);
+    when(publisherService.createPublisher(any(PublisherRequestDto.class))).thenReturn(response);
 
     mockMvc
         .perform(post("/api/v1/publisher").contentType("application/json").content(requestJson))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id").value(created.id().toString()))
+        .andExpect(jsonPath("$.id").value(response.id().toString()))
         .andExpect(jsonPath("$.name").value("O'Reilly"))
         .andExpect(jsonPath("$.country").value("USA"));
   }
@@ -76,12 +78,12 @@ class PublisherControllerTest {
   @Test
   void updatePublisherReturnsUpdatedPublisher() throws Exception {
     UUID id = UUID.randomUUID();
-    PublisherDto updated = new PublisherDto(id, "No Starch", "USA");
+    PublisherResponseDto response = new PublisherResponseDto(id, "No Starch", "USA");
     String requestJson =
         """
 				{"name":"No Starch","country":"USA"}
 				""";
-    when(publisherService.updatePublisher(eq(id), any(PublisherDto.class))).thenReturn(updated);
+    when(publisherService.updatePublisher(eq(id), any(PublisherRequestDto.class))).thenReturn(response);
 
     mockMvc
         .perform(

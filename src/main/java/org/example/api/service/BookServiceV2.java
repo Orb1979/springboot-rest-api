@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.api.dto.AuthorResponseDto;
 import org.example.api.dto.BookRequestDto;
 import org.example.api.dto.BookResponseDto;
-import org.example.api.dto.PublisherDto;
+import org.example.api.dto.PublisherResponseDto;
 import org.example.api.entity.Author;
 import org.example.api.entity.AuthorBook;
 import org.example.api.entity.Book;
@@ -193,7 +193,7 @@ public class BookServiceV2 {
         book.getPages(),
         book.getIsbn(),
         book.getPublisher() != null
-            ? new PublisherDto(
+            ? new PublisherResponseDto(
                 book.getPublisher().getId(),
                 book.getPublisher().getName(),
                 book.getPublisher().getCountry())

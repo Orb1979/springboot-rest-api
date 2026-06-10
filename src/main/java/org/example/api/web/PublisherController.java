@@ -3,7 +3,8 @@ package org.example.api.web;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.example.api.dto.PublisherDto;
+import org.example.api.dto.PublisherRequestDto;
+import org.example.api.dto.PublisherResponseDto;
 import org.example.api.service.PublisherService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,24 +23,24 @@ public class PublisherController {
   private final PublisherService publisherService;
 
   @GetMapping("/{id}")
-  public PublisherDto getPublisher(@PathVariable UUID id) {
+  public PublisherResponseDto getPublisher(@PathVariable UUID id) {
     return publisherService.getPublisher(id);
   }
 
   @GetMapping
-  public List<PublisherDto> getPublishers() {
+  public List<PublisherResponseDto> getPublishers() {
     return publisherService.getPublishers();
   }
 
   @PostMapping
-  public PublisherDto createPublisher(@RequestBody PublisherDto publisherDto) {
-    return publisherService.createPublisher(publisherDto);
+  public PublisherResponseDto createPublisher(@RequestBody PublisherRequestDto requestDto) {
+    return publisherService.createPublisher(requestDto);
   }
 
   @PutMapping("/{id}")
-  public PublisherDto updatePublisher(
-      @PathVariable UUID id, @RequestBody PublisherDto publisherDto) {
-    return publisherService.updatePublisher(id, publisherDto);
+  public PublisherResponseDto updatePublisher(
+      @PathVariable UUID id, @RequestBody PublisherRequestDto requestDto) {
+    return publisherService.updatePublisher(id, requestDto);
   }
 
   @DeleteMapping("/{id}")

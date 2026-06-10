@@ -9,7 +9,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 import java.util.UUID;
-import org.example.api.dto.PublisherDto;
+
+import org.example.api.dto.PublisherRequestDto;
+import org.example.api.dto.PublisherResponseDto;
 import org.example.api.entity.Publisher;
 import org.example.api.repository.PublisherRepository;
 import org.junit.jupiter.api.Test;
@@ -28,13 +30,13 @@ class PublisherServiceTest {
 
   @Test
   void createPublisherSavesAndReturnsPublisher() {
-    PublisherDto publisherDto = new PublisherDto(null, "publisherName", "country");
+    PublisherRequestDto requestDto = new PublisherRequestDto("publisherName", "country");
     Publisher publisher = new Publisher();
     publisher.setName("publisherName");
     publisher.setCountry("country");
     when(publisherRepository.save(any(Publisher.class))).thenReturn(publisher);
 
-    PublisherDto result = publisherService.createPublisher(publisherDto);
+    PublisherResponseDto result = publisherService.createPublisher(requestDto);
 
     assertEquals("publisherName", result.name());
     assertEquals("country", result.country());
@@ -48,12 +50,12 @@ class PublisherServiceTest {
     existingPublisher.setName("Old Name");
     existingPublisher.setCountry("Old Country");
 
-    PublisherDto updatedPublisher = new PublisherDto(null, "New Name", "New Country");
+    PublisherRequestDto requestDto = new PublisherRequestDto("New Name", "New Country");
 
     when(publisherRepository.findById(id)).thenReturn(Optional.of(existingPublisher));
     when(publisherRepository.save(existingPublisher)).thenReturn(existingPublisher);
 
-    PublisherDto result = publisherService.updatePublisher(id, updatedPublisher);
+    PublisherResponseDto result = publisherService.updatePublisher(id, requestDto);
 
     assertEquals("New Name", result.name());
     assertEquals("New Country", result.country());
@@ -67,7 +69,7 @@ class PublisherServiceTest {
 
     assertThrows(
         ResponseStatusException.class,
-        () -> publisherService.updatePublisher(id, new PublisherDto(null, "a", "b")));
+        () -> publisherService.updatePublisher(id, new PublisherRequestDto("a", "b")));
     verify(publisherRepository, never()).save(any());
   }
 

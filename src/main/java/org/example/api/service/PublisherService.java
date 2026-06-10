@@ -3,7 +3,8 @@ package org.example.api.service;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.example.api.dto.PublisherDto;
+import org.example.api.dto.PublisherRequestDto;
+import org.example.api.dto.PublisherResponseDto;
 import org.example.api.entity.Publisher;
 import org.example.api.repository.PublisherRepository;
 import org.springframework.http.HttpStatus;
@@ -16,30 +17,30 @@ public class PublisherService {
 
   private final PublisherRepository publisherRepository;
 
-  public PublisherDto getPublisher(UUID id) {
+  public PublisherResponseDto getPublisher(UUID id) {
     Publisher publisher = publisherRepository.findById(id).orElse(null);
     return toDto(publisher);
   }
 
-  public List<PublisherDto> getPublishers() {
+  public List<PublisherResponseDto> getPublishers() {
     return publisherRepository.findAll().stream().map(this::toDto).toList();
   }
 
-  public PublisherDto createPublisher(PublisherDto publisherDto) {
-    Publisher publisher = toEntity(publisherDto);
+  public PublisherResponseDto createPublisher(PublisherRequestDto requestDto) {
+    Publisher publisher = toEntity(requestDto);
     Publisher saved = publisherRepository.save(publisher);
     return toDto(saved);
   }
 
-  public PublisherDto updatePublisher(UUID id, PublisherDto publisherDto) {
+  public PublisherResponseDto updatePublisher(UUID id, PublisherRequestDto requestDto) {
     Publisher existingPublisher =
         publisherRepository
             .findById(id)
             .orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Publisher not found"));
 
-    existingPublisher.setName(publisherDto.name());
-    existingPublisher.setCountry(publisherDto.country());
+    existingPublisher.setName(requestDto.name());
+    existingPublisher.setCountry(requestDto.country());
 
     Publisher saved = publisherRepository.save(existingPublisher);
     return toDto(saved);
@@ -52,22 +53,19 @@ public class PublisherService {
     publisherRepository.deleteById(id);
   }
 
-  private PublisherDto toDto(Publisher publisher) {
+  private PublisherResponseDto toDto(Publisher publisher) {
     if (publisher == null) {
       return null;
     }
-    return new PublisherDto(publisher.getId(), publisher.getName(), publisher.getCountry());
+    return new PublisherResponseDto(publisher.getId(), publisher.getName(), publisher.getCountry());
   }
 
-  private Publisher toEntity(PublisherDto dto) {
+  private Publisher toEntity(PublisherRequestDto dto) {
     if (dto == null) {
       return null;
     }
 
     Publisher publisher = new Publisher();
-    if (dto.id() != null) {
-      publisher.setId(dto.id());
-    }
     publisher.setName(dto.name());
     publisher.setCountry(dto.country());
     return publisher;

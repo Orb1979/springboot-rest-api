@@ -10,5 +10,5 @@ public record BookResponseDto(
     String description,
     int pages,
     String isbn,
-    PublisherDto publisher,
+    PublisherResponseDto publisher,
     List<AuthorResponseDto> authors) {}

@@ -19,7 +19,7 @@ import java.util.UUID;
 import org.example.api.dto.AuthorResponseDto;
 import org.example.api.dto.BookRequestDto;
 import org.example.api.dto.BookResponseDto;
-import org.example.api.dto.PublisherDto;
+import org.example.api.dto.PublisherResponseDto;
 import org.example.api.service.BookService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -231,7 +231,7 @@ class BookControllerTest {
         description,
         pages,
         isbn,
-        new PublisherDto(publisherId, publisherName, publisherCountry),
+        new PublisherResponseDto(publisherId, publisherName, publisherCountry),
         List.of(new AuthorResponseDto(authorId, authorFirstName, authorLastName, authorBirthDate)));
   }
 
