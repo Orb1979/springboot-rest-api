@@ -25,19 +25,21 @@ CREATE TABLE author (
      birth_date DATE
 );
 
-CREATE TABLE author_book (
-      author_id UUID NOT NULL,
-      book_id UUID NOT NULL,
+CREATE TABLE author_book(
+    id UUID PRIMARY KEY,
+    author_id UUID NOT NULL,
+    book_id   UUID NOT NULL,
 
-      PRIMARY KEY (author_id, book_id),
+    CONSTRAINT uq_author_book
+        UNIQUE (author_id, book_id),
 
-      CONSTRAINT fk_author_book_author
-          FOREIGN KEY (author_id)
-              REFERENCES author(id)
-              ON DELETE CASCADE,
+    CONSTRAINT fk_author_book_author
+        FOREIGN KEY (author_id)
+            REFERENCES author (id)
+            ON DELETE CASCADE,
 
-      CONSTRAINT fk_author_book_book
-          FOREIGN KEY (book_id)
-              REFERENCES book(id)
-              ON DELETE CASCADE
+    CONSTRAINT fk_author_book_book
+        FOREIGN KEY (book_id)
+        REFERENCES book (id)
+        ON DELETE CASCADE
 );
