@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Swagger UI - REST API Documentation</title>
+  <link rel="stylesheet" type="text/css" href="swagger-ui.css">
+</head>
+<body>
+<div id="swagger-ui"></div>
+
+<script src="swagger-ui-bundle.js"></script>
+<script>
+  const ui = SwaggerUIBundle({
+    url: "/v3/api-docs",
+    dom_id: '#swagger-ui',
+    presets: [
+      SwaggerUIBundle.presets.apis,
+      SwaggerUIBundle.SwaggerUIStandalonePreset
+    ],
+    layout: "BaseLayout",
+    deepLinking: true,
+    displayOperationId: true,
+    filter: true,
+    tagsSorter: "alpha",
+    operationsSorter: "alpha",
+    docExpansion: "full",
+    defaultModelsExpandDepth: -1,
+    defaultModelExpandDepth: -1,
+    defaultModelRendering: "model",
+    showMutatedRequest: true,
+    requestInterceptor: (req) => {
+      // Add any request interceptors here if needed
+      return req;
+    },
+    responseInterceptor: (res) => {
+      // Add any response interceptors here if needed
+      return res;
+    }
+  });
+</script>
+</body>
+</html>

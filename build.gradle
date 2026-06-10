@@ -35,6 +35,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-flyway:4.0.1")
     implementation("org.flywaydb:flyway-database-postgresql")
 
+    // SpringDoc OpenAPI for API documentation
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
