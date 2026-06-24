@@ -191,7 +191,8 @@ class BookServiceV2Test {
 
     when(bookRepository.findByIdHydrated(bookId)).thenReturn(Optional.of(existingBook));
     when(publisherRepository.findById(newPublisherId)).thenReturn(Optional.of(newPublisher));
-    when(authorRepository.findAllById(List.of(newAuthorId))).thenReturn(List.of(newAuthor));
+    when(authorRepository.findById(newAuthorId)).thenReturn(Optional.of(newAuthor));
+
     when(bookRepository.save(existingBook)).thenReturn(existingBook);
 
     BookResponseDto result = bookService.updateBook(bookId, request);

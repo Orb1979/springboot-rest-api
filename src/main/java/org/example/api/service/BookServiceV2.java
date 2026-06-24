@@ -1,7 +1,10 @@
 package org.example.api.service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.example.api.dto.AuthorResponseDto;
 import org.example.api.dto.BookRequestDto;
@@ -67,13 +70,7 @@ public class BookServiceV2 {
     existingBook.setPages(bookRequestDto.pages());
     existingBook.setIsbn(bookRequestDto.isbn());
     existingBook.setPublisher(resolvePublisher(bookRequestDto.publisherId()));
-    existingBook.getAuthorBooks().clear();
-    if (bookRequestDto.authorIds() != null) {
-      resolveAuthors(bookRequestDto.authorIds()).forEach(author -> {
-        existingBook.getAuthorBooks().add(new AuthorBook(author, existingBook));
-      });
-    }
-
+    updateAuthors(existingBook, bookRequestDto.authorIds());
     Book saved = bookRepository.save(existingBook);
     return toResponseDto(saved);
   }
@@ -104,10 +101,7 @@ public class BookServiceV2 {
       existingBook.setPublisher(resolvePublisher(dto.publisherId()));
     }
     if (dto.authorIds() != null) {
-      existingBook.getAuthorBooks().clear();
-      resolveAuthors(dto.authorIds()).forEach(author -> {
-        existingBook.getAuthorBooks().add(new AuthorBook(author, existingBook));
-      });
+      updateAuthors(existingBook, dto.authorIds());
     }
 
     Book saved = bookRepository.save(existingBook);
@@ -182,6 +176,36 @@ public class BookServiceV2 {
     book.setPublisher(null);
     bookRepository.save(book);
     return getBook(bookId);
+  }
+
+  private void updateAuthors(Book book, List<UUID> newAuthorIds) {
+    if (newAuthorIds == null) {
+      return;
+    }
+
+    // Get current author IDs
+    Set<UUID> currentAuthorIds =
+        book.getAuthorBooks().stream()
+            .map(ab -> ab.getAuthor().getId())
+            .collect(Collectors.toSet());
+
+    // Get new author IDs
+    Set<UUID> newAuthorIdSet = new HashSet<>(newAuthorIds);
+
+    // Remove authors that are no longer in the list
+    book.getAuthorBooks().removeIf(ab -> !newAuthorIdSet.contains(ab.getAuthor().getId()));
+
+    // Add new authors
+    newAuthorIdSet.forEach(
+        authorId -> {
+          if (!currentAuthorIds.contains(authorId)) {
+            Author author =
+                authorRepository
+                    .findById(authorId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Author not found"));
+            book.getAuthorBooks().add(new AuthorBook(author, book));
+          }
+        });
   }
 
   private BookResponseDto toResponseDto(Book book) {
