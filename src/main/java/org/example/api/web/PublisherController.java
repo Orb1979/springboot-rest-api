@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.api.dto.PublisherRequestDto;
 import org.example.api.dto.PublisherResponseDto;
 import org.example.api.service.PublisherService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,28 +25,29 @@ public class PublisherController {
   private final PublisherService publisherService;
 
   @GetMapping("/{id}")
-  public PublisherResponseDto getPublisher(@PathVariable UUID id) {
-    return publisherService.getPublisher(id);
+  public ResponseEntity<PublisherResponseDto> getPublisher(@PathVariable UUID id) {
+    return ResponseEntity.ok(publisherService.getPublisher(id));
   }
 
   @GetMapping
-  public List<PublisherResponseDto> getPublishers() {
-    return publisherService.getPublishers();
+  public  ResponseEntity<List<PublisherResponseDto>> getPublishers() {
+    return ResponseEntity.ok(publisherService.getPublishers());
   }
 
   @PostMapping
-  public PublisherResponseDto createPublisher(@RequestBody PublisherRequestDto requestDto) {
-    return publisherService.createPublisher(requestDto);
+  public  ResponseEntity<PublisherResponseDto> createPublisher(@RequestBody PublisherRequestDto requestDto) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(publisherService.createPublisher(requestDto));
   }
 
   @PutMapping("/{id}")
-  public PublisherResponseDto updatePublisher(
+  public  ResponseEntity<PublisherResponseDto> updatePublisher(
       @PathVariable UUID id, @RequestBody PublisherRequestDto requestDto) {
-    return publisherService.updatePublisher(id, requestDto);
+    return ResponseEntity.ok(publisherService.updatePublisher(id, requestDto));
   }
 
   @DeleteMapping("/{id}")
-  public void deletePublisher(@PathVariable UUID id) {
+  public ResponseEntity<Void> deletePublisher(@PathVariable UUID id) {
     publisherService.deletePublisher(id);
+    return ResponseEntity.noContent().build();
   }
 }

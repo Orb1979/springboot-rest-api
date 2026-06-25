@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.api.dto.BookRequestDto;
 import org.example.api.dto.BookResponseDto;
 import org.example.api.service.BookServiceV2;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,7 @@ public class BookControllerV2 {
 
   @PostMapping
   public ResponseEntity<BookResponseDto> createBook(@RequestBody BookRequestDto bookRequestDto) {
-    return ResponseEntity.ok(bookService.createBook(bookRequestDto));
+    return ResponseEntity.status(HttpStatus.CREATED).body(bookService.createBook(bookRequestDto));
   }
 
   @PutMapping("/{id}")

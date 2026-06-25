@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.api.dto.AuthorRequestDto;
 import org.example.api.dto.AuthorResponseDto;
 import org.example.api.service.AuthorService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,27 +24,29 @@ public class AuthorController {
   private final AuthorService authorService;
 
   @GetMapping("/{id}")
-  public AuthorResponseDto getAuthor(@PathVariable UUID id) {
-    return authorService.getAuthor(id);
+  public ResponseEntity<AuthorResponseDto> getAuthor(@PathVariable UUID id) {
+    return ResponseEntity.ok(authorService.getAuthor(id));
   }
 
   @GetMapping()
-  public List<AuthorResponseDto> getAuthors() {
-    return authorService.getAuthors();
+  public ResponseEntity<List<AuthorResponseDto>> getAuthors() {
+    return ResponseEntity.ok(authorService.getAuthors());
   }
 
   @PostMapping
-  public AuthorResponseDto createAuthor(@RequestBody AuthorRequestDto requestDto) {
-    return authorService.createAuthor(requestDto);
+  public ResponseEntity<AuthorResponseDto> createAuthor(@RequestBody AuthorRequestDto requestDto) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(authorService.createAuthor(requestDto));
   }
 
   @PutMapping("/{id}")
-  public AuthorResponseDto updateAuthor(@PathVariable UUID id, @RequestBody AuthorRequestDto requestDto) {
-    return authorService.updateAuthor(id, requestDto);
+  public ResponseEntity<AuthorResponseDto> updateAuthor(
+      @PathVariable UUID id, @RequestBody AuthorRequestDto requestDto) {
+    return ResponseEntity.ok(authorService.updateAuthor(id, requestDto));
   }
 
   @DeleteMapping("/{id}")
-  public void deleteAuthor(@PathVariable UUID id) {
+  public ResponseEntity<Void> deleteAuthor(@PathVariable UUID id) {
     authorService.deleteAuthor(id);
+    return ResponseEntity.noContent().build();
   }
 }

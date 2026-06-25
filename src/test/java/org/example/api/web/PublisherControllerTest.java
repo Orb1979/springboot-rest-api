@@ -69,7 +69,7 @@ class PublisherControllerTest {
 
     mockMvc
         .perform(post("/api/v1/publisher").contentType("application/json").content(requestJson))
-        .andExpect(status().isOk())
+        .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id").value(response.id().toString()))
         .andExpect(jsonPath("$.name").value("O'Reilly"))
         .andExpect(jsonPath("$.country").value("USA"));
@@ -99,7 +99,7 @@ class PublisherControllerTest {
     UUID id = UUID.randomUUID();
     doNothing().when(publisherService).deletePublisher(id);
 
-    mockMvc.perform(delete("/api/v1/publisher/{id}", id)).andExpect(status().isOk());
+    mockMvc.perform(delete("/api/v1/publisher/{id}", id)).andExpect(status().isNoContent());
 
     verify(publisherService).deletePublisher(id);
   }

@@ -59,7 +59,7 @@ public class IntegrationTest {
                         """
 								{"name":"Manning","country":"USA"}
 								"""))
-            .andExpect(status().isOk())
+            .andExpect(status().isCreated())
             .andReturn()
             .getResponse()
             .getContentAsString();
@@ -74,7 +74,7 @@ public class IntegrationTest {
                         """
 								{"firstName":"Robert","lastName":"Martin","birthDate":"1952-12-05"}
 								"""))
-            .andExpect(status().isOk())
+            .andExpect(status().isCreated())
             .andReturn()
             .getResponse()
             .getContentAsString();

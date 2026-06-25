@@ -72,7 +72,7 @@ class AuthorControllerTest {
 
     mockMvc
         .perform(post("/api/v1/author").contentType("application/json").content(requestJson))
-        .andExpect(status().isOk())
+        .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id").value(responseDto.id().toString()))
         .andExpect(jsonPath("$.firstName").value("John"))
         .andExpect(jsonPath("$.lastName").value("Smith"))
@@ -104,7 +104,7 @@ class AuthorControllerTest {
     UUID id = UUID.randomUUID();
     doNothing().when(authorService).deleteAuthor(id);
 
-    mockMvc.perform(delete("/api/v1/author/{id}", id)).andExpect(status().isOk());
+    mockMvc.perform(delete("/api/v1/author/{id}", id)).andExpect(status().isNoContent());
 
     verify(authorService).deleteAuthor(id);
   }
